@@ -1,0 +1,44 @@
+name: Deploy Docs
+
+on:
+  repository_dispatch:
+    types: [trigger-build]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Download bundled spec from release
+        run: |
+          curl -sSL \
+            "https://github.com/${{ github.event.client_payload.repo }}/releases/download/${{ github.event.client_payload.tag }}/openapi.yml" \
+            -o openapi.yml
+
+      - name: Generate changelog.json
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_DEPLOY_TOKEN }}
+        run: |
+          gh api /repos/${{ github.event.client_payload.repo }}/releases \
+            --jq '[.[] | {tag_name, name, body, published_at}]' \
+            > changelog.json
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

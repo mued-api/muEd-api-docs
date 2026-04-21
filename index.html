@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>µEd API</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; color: #1f2328; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #57606a; margin-top: 0; }
+    .cta { display: inline-block; margin: 1.5rem 0; padding: 0.75rem 1.5rem;
+           background: #0969da; color: #fff; text-decoration: none; border-radius: 6px;
+           font-weight: 500; }
+    .cta:hover { background: #0860ca; }
+    .release { border-top: 1px solid #d0d7de; padding: 1.5rem 0; }
+    .release h3 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+    .release time { font-size: 0.85rem; color: #57606a; }
+    .release-body { margin-top: 0.75rem; line-height: 1.6; }
+    .release-body p { margin: 0.5rem 0; }
+    .release-body ul { margin: 0.5rem 0; padding-left: 1.5rem; }
+  </style>
+</head>
+<body>
+  <h1>µEd API</h1>
+  <p class="subtitle">A standard interface for educational microservices</p>
+  <p>The µEd API defines a common contract for services providing automatic feedback,
+     grading, and conversational learning endpoints.</p>
+
+  <a class="cta" href="./spec/">View API Documentation</a>
+
+  <h2>Changelog</h2>
+  <div id="changelog"><p>Loading...</p></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    fetch('./changelog.json')
+      .then(r => r.json())
+      .then(releases => {
+        const el = document.getElementById('changelog');
+        if (!releases.length) { el.innerHTML = '<p>No releases yet.</p>'; return; }
+        el.innerHTML = releases.map(r => `
+          <div class="release">
+            <h3>${r.name || r.tag_name}</h3>
+            <time>${new Date(r.published_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+            <div class="release-body">${marked.parse(r.body || '')}</div>
+          </div>`).join('');
+      })
+      .catch(() => {
+        document.getElementById('changelog').innerHTML = '<p>Changelog unavailable.</p>';
+      });
+  </script>
+</body>
+</html>
