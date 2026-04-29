@@ -2,6 +2,13 @@ name: Deploy Docs
 
 on:
   workflow_dispatch:
+    inputs:
+      repo:
+        description: 'Source repo (owner/name)'
+        required: true
+      tag:
+        description: 'Release tag to pull spec from'
+        required: true
   repository_dispatch:
     types: [trigger-build]
 
@@ -24,7 +31,7 @@ jobs:
       - name: Download bundled spec from release
         run: |
           curl -sSfL \
-            "https://github.com/${{ github.event.client_payload.repo }}/releases/download/${{ github.event.client_payload.tag }}/openapi.yml" \
+            "https://github.com/${{ github.event.client_payload.repo || github.event.inputs.repo }}/releases/download/${{ github.event.client_payload.tag || github.event.inputs.tag }}/openapi.yml" \
             -o openapi.yml
           python3 -c "
           import yaml, sys
@@ -39,7 +46,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.DOCS_DEPLOY_TOKEN }}
         run: |
-          gh api /repos/${{ github.event.client_payload.repo }}/releases \
+          gh api /repos/${{ github.event.client_payload.repo || github.event.inputs.repo }}/releases \
             --jq '[.[] | {tag_name, name, body, published_at}]' \
             > changelog.json
 
