@@ -3,14 +3,14 @@ name: Deploy Docs
 on:
   workflow_dispatch:
     inputs:
-      repo:
-        description: 'Source repo (owner/name)'
-        required: true
       tag:
         description: 'Release tag to pull spec from'
         required: true
   repository_dispatch:
     types: [trigger-build]
+
+env:
+  SOURCE_REPO: mued-api/muEd-api
 
 permissions:
   contents: read
@@ -34,7 +34,7 @@ jobs:
         run: |
           gh release download \
             "${{ github.event.client_payload.tag || github.event.inputs.tag }}" \
-            --repo "${{ github.event.client_payload.repo || github.event.inputs.repo }}" \
+            --repo "${{ github.event.client_payload.repo || env.SOURCE_REPO }}" \
             --pattern "openapi.yml" \
             --output openapi.yml
           python3 -c "
@@ -50,7 +50,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.DOCS_DEPLOY_TOKEN }}
         run: |
-          gh api /repos/${{ github.event.client_payload.repo || github.event.inputs.repo }}/releases \
+          gh api /repos/${{ github.event.client_payload.repo || env.SOURCE_REPO }}/releases \
             --jq '[.[] | {tag_name, name, body, published_at}]' \
             > changelog.json
 
