@@ -4,10 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>µEd API — Spec</title>
-  <style>body { margin: 0; padding: 0; }</style>
+  <style>
+    body { margin: 0; padding: 0; }
+    #spec-error { display: none; font-family: system-ui, sans-serif; padding: 3rem 2rem; max-width: 600px; margin: 0 auto; }
+    #spec-error h2 { color: #cf222e; }
+    #spec-error code { background: #f6f8fa; padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; }
+  </style>
 </head>
 <body>
-  <redoc spec-url="../openapi.yml"></redoc>
+  <div id="spec-error">
+    <h2>Could not load API spec</h2>
+    <p>The spec file (<code>openapi.yml</code>) could not be fetched or parsed. This usually means the deployment workflow did not run successfully for the latest release.</p>
+    <p id="spec-error-detail"></p>
+  </div>
+  <div id="redoc-container"></div>
   <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+  <script>
+    Redoc.init('../openapi.yml', {}, document.getElementById('redoc-container'), function(errors) {
+      if (errors) {
+        document.getElementById('spec-error').style.display = 'block';
+        document.getElementById('spec-error-detail').textContent = errors.message || String(errors);
+      }
+    });
+  </script>
 </body>
 </html>

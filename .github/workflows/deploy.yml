@@ -22,9 +22,17 @@ jobs:
 
       - name: Download bundled spec from release
         run: |
-          curl -sSL \
+          curl -sSfL \
             "https://github.com/${{ github.event.client_payload.repo }}/releases/download/${{ github.event.client_payload.tag }}/openapi.yml" \
             -o openapi.yml
+          python3 -c "
+          import yaml, sys
+          doc = yaml.safe_load(open('openapi.yml'))
+          if not isinstance(doc, dict):
+              print(f'ERROR: openapi.yml root is {type(doc).__name__}, expected a mapping', file=sys.stderr)
+              sys.exit(1)
+          print(f'Spec OK — openapi {doc.get(\"openapi\", \"??\")}, paths: {len(doc.get(\"paths\", {}))}')
+          "
 
       - name: Generate changelog.json
         env:
