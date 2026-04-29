@@ -12,6 +12,9 @@
            background: #0969da; color: #fff; text-decoration: none; border-radius: 6px;
            font-weight: 500; }
     .cta:hover { background: #0860ca; }
+    .links { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-top: 0.5rem; }
+    .links a { color: #0969da; text-decoration: none; font-size: 0.9rem; }
+    .links a:hover { text-decoration: underline; }
     .release { border-top: 1px solid #d0d7de; padding: 1.5rem 0; }
     .release h3 { margin: 0 0 0.25rem; font-size: 1.1rem; }
     .release time { font-size: 0.85rem; color: #57606a; }
@@ -22,11 +25,16 @@
 </head>
 <body>
   <h1>µEd API</h1>
-  <p class="subtitle">A standard interface for educational microservices</p>
+  <p class="subtitle">A standard interface for education microservices</p>
   <p>The µEd API defines a common contract for services providing automatic feedback,
      grading, and conversational learning endpoints.</p>
 
   <a class="cta" href="./spec/">View API Documentation</a>
+
+  <div class="links">
+    <a href="https://github.com/mued-api/muEd-api">GitHub Repository</a>
+    <a href="./openapi.yml">openapi.yml</a>
+  </div>
 
   <h2>Changelog</h2>
   <div id="changelog"><p>Loading...</p></div>
