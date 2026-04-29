@@ -10,7 +10,7 @@ on:
     types: [trigger-build]
 
 env:
-  SOURCE_REPO: mued-api/muEd-api
+  SOURCE_REPO: mued-api/spec
 
 permissions:
   contents: read
