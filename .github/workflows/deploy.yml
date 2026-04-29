@@ -29,10 +29,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download bundled spec from release
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_DEPLOY_TOKEN }}
         run: |
-          curl -sSfL \
-            "https://github.com/${{ github.event.client_payload.repo || github.event.inputs.repo }}/releases/download/${{ github.event.client_payload.tag || github.event.inputs.tag }}/openapi.yml" \
-            -o openapi.yml
+          gh release download \
+            "${{ github.event.client_payload.tag || github.event.inputs.tag }}" \
+            --repo "${{ github.event.client_payload.repo || github.event.inputs.repo }}" \
+            --pattern "openapi.yml" \
+            --output openapi.yml
           python3 -c "
           import yaml, sys
           doc = yaml.safe_load(open('openapi.yml'))
