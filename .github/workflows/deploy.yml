@@ -1,6 +1,7 @@
 name: Deploy Docs
 
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [trigger-build]
 
